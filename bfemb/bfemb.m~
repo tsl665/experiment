@@ -1,0 +1,37 @@
+function [ E, x, relerr ] = bfemb( Factor, b)
+%BFEMB Summary of this function goes here
+%   Detailed explanation goes here
+
+[n,M] = size(Factor.U);
+
+nBlks = 3 + 2*length(Factor.ATol);
+rowInd = [1:nBlks,1:nBlks-1];
+colInd = [1:nBlks,2:nBlks];
+
+spMats{1} = Factor.V';
+for j = length(Factor.BTol):-1:1
+    spMats = [spMats {Factor.BTol{j}'}];
+end
+spMats = [spMats {Factor.SigmaM}];
+for j = 1:length(Factor.ATol)
+    spMats = [spMats {Factor.ATol{j}}];
+end
+spMats = [spMats {Factor.U}];
+
+for j = length(spMats):length(rowInd)
+    spMats = [spMats {speye(M)}];
+end
+
+
+E = matEmbed( rowInd, colInd, spMats);
+[nE,~]=size(E);
+bS = [zeros(nE-n,1);b];
+xS = E\bS;
+x = xS(1:n);
+
+b_solve = apply_bf(Factor, x);
+
+relerr = norm(b - b_solve)/norm(b);
+
+end
+
