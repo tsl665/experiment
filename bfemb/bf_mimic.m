@@ -1,12 +1,12 @@
-function [ Factor,r ] = bf_mimic( n,rfin,tol,funName )
+function [ Factor,r ] = bf_mimic( n,opt)
 %BFEMB_MIMIC Summary of this function goes here
 %   Detailed explanation goes here
 % rfin = 75;
-lvls = round(log2(n/rfin)/2);
+lvls = round(log2(n/opt.rfin)/2);
 m = 2^(lvls-1);
 p = round(n/m);
 Nsamples = 10;
-switch funName
+switch opt.funName
     case 'dftm'
         for j = 1:Nsamples
             w = exp(-2*pi*i/n);
@@ -14,7 +14,7 @@ switch funName
             sampleIndK = min(n-p-2, round(rand*n));
             [tempX, tempK] = meshgrid(sampleIndX+(0:p-1), sampleIndK + (0:p-1));
             tempMat = w.^(tempX.*tempK)/sqrt(n);
-            rr(j) = rank(tempMat, tol);
+            rr(j) = rank(tempMat, opt.tol);
         end
 %         rr
         r = max(rr);
@@ -25,7 +25,12 @@ end
 M = m^2*r;
 
 % Middle matrix is a random perturbation matrix of size m^2*r
-Factor.SigmaM = sparse(randperm(M), 1:M, ones(1,M));
+if opt.ifMiddleEye
+    Factor.SigmaM = speye(M);
+else
+    Factor.SigmaM = sparse(randperm(M), 1:M, ones(1,M));
+end
+    
 Factor.ATol = {};
 Factor.BTol = {};
 % Sizes of blocks at middle level

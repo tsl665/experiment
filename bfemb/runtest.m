@@ -2,15 +2,69 @@ clear
 addpath ../../aux/MATLAB/MatEmb/src/
 addpath ~/Documents/MATLAB/package/BF/1D/src
 
-dataFileName = 'bfMimicEmbed01.mat';
-rfin = 75;
-nSet = 2^10*(1:2);
-for j = 1:length(nSet)
-%     n = 1024;
-    n = nSet(j)
-    [ Factor,r ] = bf_mimic( n,rfin,1e-10,'dftm' );
+dataFileName1 = 'bfMimicEmbed_permutation.mat';
+dataFileName2 = 'bfMimicEmbed_eye.mat';
+bfopt.rfin = 75;
+bfopt.tol = 1e-10;
+bfopt.funName = 'dftm';
+bfopt.ifMiddleEye = 0;
+nSetAll = 1e3*(1:1);
+for j = 1:length(nSetAll)
+    n = nSetAll(j)
+    %% Generate Mimic BF factorization -- SigmaM is Permutation
+    [ Factor,r ] = bf_mimic( n, bfopt);
+    %% Embed the factorization -- SigmaM is Permutation
+    [ E ] = bfemb( Factor );
+    
+    %% Timing and Check Error -- SigmaM is Permutation
+    nSet(j) = n;
+    lvls(j) = length(Factor.ATol);
+    [InnerMatSize(j), ~] = size(Factor.SigmaM);
+    FactorRatio(j) = InnerMatSize(j)/n;
+    [nE(j),~]=size(E);
     b = ones(n,1);
-    [ E, x, relerr(j), tSparseSolve(j), tApply(j), lvls(j), FactRatio(j) ] = bfemb( Factor, b);
+    bS = [zeros(nE-n,1);b];
+    tic
+    xS = E\bS;
+    tSparseSolve(j) = toc;
+    x = xS(1:n);
+
+    tic
+    b_solve = apply_bf(Factor, x);
+    tApply(j) = toc;
+
+    relerr(j) = norm(b - b_solve)/norm(b);    
 end
 
-save(dataFileName, 'nSet', 'relerr', 'tSparseSolve', 'tApply','lvls','FactRatio');
+save(dataFileName1, 'nSet', 'relerr', 'tSparseSolve', 'tApply','lvls','FactorRatio');
+
+bfopt.ifMiddleEye = 1;
+for j = 1:length(nSetAll)
+    n = nSetAll(j)
+    %% Generate Mimic BF factorization -- SigmaM is Identity
+    [ Factor,r ] = bf_mimic( n, bfopt);
+    %% Embed the factorization -- SigmaM is Identity
+    [ E ] = bfemb( Factor );
+    
+    %% Timing and Check Error -- SigmaM is Identity
+    nSet(j) = n;
+    lvls(j) = length(Factor.ATol);
+    [InnerMatSize(j), ~] = size(Factor.SigmaM);
+    FactorRatio(j) = InnerMatSize(j)/n;
+    [nE(j),~]=size(E);
+    b = ones(n,1);
+    bS = [zeros(nE-n,1);b];
+    tic
+    xS = E\bS;
+    tSparseSolve(j) = toc;
+    x = xS(1:n);
+
+    tic
+    b_solve = apply_bf(Factor, x);
+    tApply(j) = toc;
+
+    relerr(j) = norm(b - b_solve)/norm(b);    
+end
+
+
+save(dataFileName2, 'nSet', 'relerr', 'tSparseSolve', 'tApply','lvls','FactorRatio');
