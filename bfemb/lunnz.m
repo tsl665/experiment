@@ -9,7 +9,7 @@ bfopt.funName = 'dftm';
 bfopt.ifMiddleEye = 0;
 embopt.ifEliminateSigmaM = 0;
 embopt.ifEliminateSigmaM = ~bfopt.ifMiddleEye && embopt.ifEliminateSigmaM;
-nSetAll = 1e3*(1:2);
+nSetAll = 1e3*(1:20);
 for j = 1:length(nSetAll)
     n = nSetAll(j)
     %% Generate Mimic BF factorization
@@ -25,5 +25,6 @@ for j = 1:length(nSetAll)
     nnzTotal(j) = nnzl(j) + nnzu(j);
     nnzRatio(j) = nnzTotal(j)/n^2;
 end
-figure
-spy(E);
+save(dataFileName1, 'nSet', 'nnzl', 'nnzu', 'nnzTotal','nnzRatio');
+% figure
+% spy(E);
