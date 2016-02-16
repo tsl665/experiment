@@ -1,4 +1,4 @@
-function [ E ] = bfemb( Factor)
+function [ E ] = bfemb( Factor, opt)
 %BFEMB Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -23,6 +23,15 @@ spMats = [spMats {Factor.U}];
 for j = length(spMats)+1:length(rowInd)
     spMats = [spMats {-speye(M)}];
 end
+
+iSigmaM = length(Factor.ATol) + 2;
+iEyeOfSigmaM = nBlks + length(Factor.ATol) + 2;
+if opt.ifEliminateSigmaM
+    spMats{iSigmaM} = speye(M);
+    spMats{iEyeOfSigmaM} = -Factor.SigmaM';
+end
+    
+    
 
 
 E = matEmbed( rowInd, colInd, spMats);
