@@ -5,7 +5,7 @@ function [ Factor,r ] = bf_mimic( n,opt)
 lvls = round(log2(n/opt.rfin)/2);
 m = 2^(lvls-1);
 p = round(n/m);
-Nsamples = 10;
+Nsamples = 1;
 switch opt.funName
     case 'dftm'
         for j = 1:Nsamples
