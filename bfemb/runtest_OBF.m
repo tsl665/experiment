@@ -8,7 +8,6 @@ bfopt.funName = 'dftm';
 bfopt.tol = 1e-12;
 bfopt.trueP = 0;
 
-n = 2000;
 nSetAll = 1e3*(1:20);
 nnzL = []; nnzU = []; nnzTotal = []; nnzRate = []; nSet = [];
 for j = 1:length(nSetAll)
