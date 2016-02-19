@@ -8,23 +8,37 @@ bfopt.funName = 'dftm';
 bfopt.tol = 1e-12;
 bfopt.trueP = 0;
 
-nSetAll = 1e3*(1:20);
+nSetAll = 1e3*([1]);
 nnzL = []; nnzU = []; nnzTotal = []; nnzRate = []; nSet = [];
 for j = 1:length(nSetAll)
     n = nSetAll(j);
+    fprintf(['======================================\n']);
     fprintf(['obf_fillin test: n = ',num2str(n),'\n']);
-
+    fprintf(['BF factorization generating...\n']);
     A = OBFMimic( n, bfopt );
+    infoA = whos('A');
+    fprintf(['Complete factorization.\n', ...
+        'Original Matrices is factorized into a product of ' ... 
+        ,num2str(infoA.size(2)),' matrices. Require ' ...
+        ,num2str(infoA.bytes/2^30),' G to store the factorization. \n' ...
+        'Outer matrices have size [',num2str(size(A{1})),'].\n']);
+    fprintf(['Sparse embedding...\n\n']);
     E = OBFemb( A );
-
+    infoE = whos('E');
+    fprintf(['Complete embedding. E has size [', num2str(infoE.size(1)), ... 
+        ', ',num2str(infoE.size(2)),']. Require ' ...
+        ,num2str(infoE.bytes/2^30),' G to store the sparse embedding. \n\n']);
+    
+    fprintf(['umfpack LU factorizing...\n']);
     [L, U, P, Q, R] = lu(E);
     nnzL(j) = nnz(L);
     nnzU(j) = nnz(U);
     nnzTotal(j) = nnzL(j) + nnzU(j);
     nnzRate(j) = nnzTotal(j)/n^2;
     nSet(j) = n;
+    nnzE(j) = nnz(E);
     
-    save(dataFileName, 'nSet', 'nnzL', 'nnzU', 'nnzTotal','nnzRate');
+%     save(dataFileName, 'nSet', 'nnzL', 'nnzU', 'nnzTotal','nnzRate', 'nnzE');
 end
 
 % figure
