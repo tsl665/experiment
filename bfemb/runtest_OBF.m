@@ -8,7 +8,8 @@ bfopt.funName = 'dftm';
 bfopt.tol = 1e-12;
 bfopt.trueP = 0;
 
-nSetAll = 1e3*([1]);
+% nSetAll = 1e3*([1]);
+nSetAll = 2.^[10:10];
 nnzL = []; nnzU = []; nnzTotal = []; nnzRate = []; nSet = [];
 for j = 1:length(nSetAll)
     n = nSetAll(j);
@@ -37,10 +38,14 @@ for j = 1:length(nSetAll)
     nnzRate(j) = nnzTotal(j)/n^2;
     nSet(j) = n;
     nnzE(j) = nnz(E);
-    
+
+
 %     save(dataFileName, 'nSet', 'nnzL', 'nnzU', 'nnzTotal','nnzRate', 'nnzE');
 end
-
+for j = 1:length(nSetAll)
+    fprintf('n = %4i,  nz before = %8i, nz lu =%8i, ratio= %3f\n', nSet(j),nnzE(j),...
+	nnzTotal(j),  nnzTotal(j)/nnzE(j));
+end
 % figure
 % subplot(3,2,1); spy(L1);subplot(3,2,2);spy(U1);
 % subplot(3,2,3);spy(L2);subplot(3,2,4);spy(U2);

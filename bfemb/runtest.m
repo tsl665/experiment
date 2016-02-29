@@ -10,7 +10,9 @@ bfopt.funName = 'dftm';
 bfopt.ifMiddleEye = 0;
 embopt.ifEliminateSigmaM = 0;
 embopt.ifEliminateSigmaM = ~bfopt.ifMiddleEye && embopt.ifEliminateSigmaM;
-nSetAll = 1e3*([1,2,4,8,16,32,64,128]);
+% nSetAll = 1e3*([1,2,4,8,16,32,64,128]);
+% nSetAll = 1e3*4;
+nSetAll = 2.^[4:10];
 for j = 1:length(nSetAll)
     n = nSetAll(j);
     

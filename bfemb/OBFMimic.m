@@ -2,6 +2,7 @@ function [ A ] = OBFMimic( n, opt )
 %OBFMIMIC Summary of this function goes here
 %   Detailed explanation goes here
 lvls = round(log2(n/opt.rfin));
+% lvls = round(log2(n));
 M = 2^lvls;
 p = round(n/sqrt(M));
 Nsamples = 1;
