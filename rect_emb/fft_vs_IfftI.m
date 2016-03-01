@@ -4,7 +4,7 @@ addpath /Users/sunlitang/Documents/github/st1552_gitlab/sparse-butterfly/oldtest
 addpath ../../aux/MATLAB/MatEmb/src/
 
 k = 1;
-mSet = 8:10;
+mSet = 8:14;
 plotGap = length(mSet);
 for m = mSet;
     n1 = 2^m;

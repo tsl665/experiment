@@ -1,4 +1,4 @@
-function [ A,B,P ] = OBFMimic( n, opt )
+function [ A,r, finestSize ] = OBFMimic2( n, opt )
 %OBFMIMIC Summary of this function goes here
 %   Detailed explanation goes here
 lvls = round(log2(n/opt.rfin));
@@ -24,19 +24,15 @@ end
 n1 = n - floor(n/M)*M;
 finestSize = [ceil(n/M)*ones(1,n1),floor(n/M)*ones(1,M-n1)];
 A{1} = matEmbed(1:M,1:M,mat2cell(sparse(rand(r, n)),r,finestSize));
+
 for l = 1:lvls-1
     nDiagBlks = 2^(l-1);
     matsPerDiagBlks = M / nDiagBlks;
     for j = 1:nDiagBlks
-        diagBlks{j} = OBFpermutation(mat2cell(sparse(rand(r, 2*r*matsPerDiagBlks)) ...
-        ,r,2*r*ones(matsPerDiagBlks,1)));
-        for kk = 1:matsPerDiagBlks
-            tempMat{kk} = speye(r);
-        end
-        diagPs = OBFpermutation(tempMat);
+        diagBlks{j} = OBFpermutation(mat2cell(sparse(rand(r, 2*r*matsPerDiagBlks ...
+        )),r,2*r*ones(matsPerDiagBlks,1)));
     end
     A{l+1} = matEmbed(1:nDiagBlks, 1:nDiagBlks, diagBlks);
-    P{l} = matEmbed(1:nDiagBlks, 1:nDiagBlks, diagPs)';
 end
 A{lvls+1} = matEmbed(1:M,1:M,mat2cell(sparse(rand(n, r)),finestSize,r));
 
