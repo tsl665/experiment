@@ -12,7 +12,7 @@ if strcmp(opt.env, 'sunliMac')
     addpath /Users/sunlitang/Documents/github/tsl665/aux/MATLAB/MatEmb/src/
     addpath /Users/sunlitang/Documents/github/tsl665/experiment/bfemb/
     addpath /Users/sunlitang/Documents/github/st1552_gitlab/sparse-butterfly/oldtest
-elseif ctrcmp (opt.env, 'borg')
+elseif strcmp (opt.env, 'borg')
     addpath /home/sunli/Documents/gitlab/sparse-butterfly/oldtest
     addpath /home/sunli/Documents/Code/experiment/bfemb
     addpath /home/sunli/Documents/Code/aux/MATLAB/MatEmb/src
@@ -23,10 +23,9 @@ nSet = 2.^[6:14];
 
 % blkSizeSet = 2.^[0:3];
 % nSet = 2.^[6:8];
-
-for k1 = 1:length(blkSizeSet)
-    r = blkSizeSet(k1);
-    for k2 = 1:length(nSet)
+for k2 = 1:length(nSet)
+    for k1 = 1:length(blkSizeSet)
+        r = blkSizeSet(k1);
         n = nSet(k2);
         m = round(log2(n/r));
 
