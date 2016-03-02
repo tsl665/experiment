@@ -1,10 +1,13 @@
 clear
+
+addpath /Users/sunlitang/Documents/github/tsl665/aux/MATLAB/MatEmb/src/
+
 bfopt.rfin = 75;
 bfopt.funName = 'dftm';
 bfopt.tol = 1e-12;
 bfopt.trueP = 0;
 
-nSet = 1024*[1,2,4,8,16,32];
+nSet = 1024*[1,2,4,8,16];
 
 for k = 1:length(nSet)
     n = nSet(k);
@@ -28,6 +31,16 @@ for k = 1:length(nSet)
         B{k+1} = B{k+1}(:,p{k-1});
     end
     B{length(B)} = B{length(B)}(p{kmax},:);
+    
+%     %% Make A{1}, A{last} and B{1}, B{last} square
+%     A{1} = B{2};
+%     A{length(A)} = B{2};
+%     B{1} = B{2};
+%     B{length(B)} = B{2};
+    
+    %% Get rid of A{1} , A{last}; B{1} and B{last}
+    A = A(2:length(A)-1);
+    B = B(2:length(B)-1);
 
     %% test fill-in of original matrix A
     [ E ] = OBFemb( A );
@@ -40,8 +53,9 @@ for k = 1:length(nSet)
 
     fprintf('Before permute: n = %4i,  nz before = %8i, nz lu =%8i, ratio= %3f\n', n,nnzA1,...
         nnzA2,  ratA);
-    % figure
-    % subplot(2,2,1); spy(E); subplot(2,2,3); spy(L+U);
+    figure('vis', 'off')
+    set(gcf, 'Position', [200,200,600,600])
+    subplot(2,2,1); spy(E); title('E'); subplot(2,2,3); spy(L+U); title('L+U');
 
     %% test fill-in of permuted matrix B
     [ E ] = OBFemb( B );
@@ -55,8 +69,10 @@ for k = 1:length(nSet)
 
     fprintf('After permute: n = %4i,  nz before = %8i, nz lu =%8i, ratio= %3f\n', n,nnzB1,...
         nnzB2,  ratB);
-    % subplot(2,2,2); spy(E); subplot(2,2,4); spy(L+U);
+    subplot(2,2,2); spy(E); title('E');subplot(2,2,4); spy(L+U);title('L+U');
 
-    save('OBF_permutevsorig_lupq.mat', 'nn', 'nnzA1', 'nnzA2', 'ratA','nnzB1', 'nnzB2', 'ratB');
+%     save('OBF_permutevsorig_lupq.mat', 'nn', 'nnzA1', 'nnzA2', 'ratA','nnzB1', 'nnzB2', 'ratB');
 
 end
+
+% print -painters -dpdf -r600 bfemb_sq.pdf
