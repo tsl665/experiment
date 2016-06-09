@@ -9,19 +9,23 @@ addpath ../../aux/MATLAB/MatEmb/src/
 % ndiagblks = n1/r1;
 
 wbratio = 0.5;
-pwrSet = 1:5;
+pwrSet = 5:5;
 nSet = 100*2.^pwrSet;
-nInnerBlks = 10;
+nInnerBlks = 0;
 for k = 1:length(pwrSet)
     n1 = nSet(k);
-    r1 = 10;
+    r1 = 400;
     r2 = round(r1*wbratio);
     n2 = r2*n1/r1;
     ndiagblks = n1/r1;
     
     rowInd = [1:nInnerBlks+2, 1:nInnerBlks+1];
     colInd = [1:nInnerBlks+2, 2:nInnerBlks+2];
-    diagBlks = genSpMats( 'ones', r1, r2, ndiagblks );
+    
+    colInd = colInd - 1;
+    colInd(1) = nInnerBlks+2;
+
+    diagBlks = genSpMats( 'rand', r1, r2, ndiagblks );
     B = matEmbed(1:ndiagblks, 1:ndiagblks, diagBlks);
 
     mats{1} = B;
@@ -34,14 +38,20 @@ for k = 1:length(pwrSet)
         l1 = l1+1;
         l2 = l2+1;
     end
-    mats{l2} = speye(n1);
+%     mats{l2} = speye(n1);
+    rowInd(length(rowInd)) = [];
+    colInd(length(colInd)) = [];
     
     Aexp = matEmbed(rowInd,colInd,mats);
     
     
         nnz1(k) = nnz(Aexp);
     
-    [l,u,~,~,~] = lu(Aexp);
+%     [l,u,~] = lu(Aexp,'vector');
+    [l,u,~] = lu(Aexp,0);
+%     [l,u,pp] = lu(Aexp);
+
+
     
     nnz2(k) = nnz(l)+nnz(u);
     rat(k) = nnz2(k)/nnz1(k);

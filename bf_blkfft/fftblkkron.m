@@ -4,7 +4,7 @@ clear
 opt.env = 'sunliMac';
 
 opt.ifcolamd = 0;
-opt.ifspyplot = 0;
+opt.ifspyplot = 1;
 opt.ifsaveData = 0;
 opt.dataName = 'fftKron_blkSize_conv.mat';
 
@@ -18,12 +18,12 @@ elseif strcmp (opt.env, 'borg')
     addpath /home/sunli/Documents/Code/aux/MATLAB/MatEmb/src
 end
 
-blkSizeSet = 2.^[0:5];
-nSet = 2.^[6:14];
+blkSizeSet = 2.^[0:0];
+nSet = 2.^[6:6];
 
 % blkSizeSet = 2.^[0:3];
 % nSet = 2.^[6:8];
-for k2 = 1:length(nSet)
+for k2 = 1:length(nSet) 
     for k1 = 1:length(blkSizeSet)
         r = blkSizeSet(k1);
         n = nSet(k2);

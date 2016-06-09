@@ -56,11 +56,14 @@ for j = 1:lvls-1
     tempX = reshape(1:m^2/2,mj,m*2^(j-2));
     colInd = reshape([tempX;tempX],1,m^2);
     
-    Factor.ATol{j} = matEmbed(rowInd,colInd,blocks) + speye(M);
+%     Factor.ATol{j} = matEmbed(rowInd,colInd,blocks) + speye(M);
+    Factor.ATol{j} = matEmbed(rowInd,colInd,blocks);
+
     
 %     tempVal = rand(2*M, r);
     blocks = mat2cell(sparse(rand(M, 2*r)), r*ones(m^2,1) ,2*r);
-    Factor.BTol{j} = matEmbed(rowInd,colInd,blocks) + speye(M);
+%     Factor.BTol{j} = matEmbed(rowInd,colInd,blocks) + speye(M);
+    Factor.BTol{j} = matEmbed(rowInd,colInd,blocks);
 end
   
 n1 = n - floor(n/m^2)*m^2;

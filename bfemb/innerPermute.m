@@ -7,7 +7,8 @@ bfopt.funName = 'dftm';
 bfopt.tol = 1e-12;
 bfopt.trueP = 0;
 
-nSet = 1024*[1,2,4,8,16];
+% nSet = 1024*[1,2,4,8,16];
+nSet = 1024*[1];
 
 for k = 1:length(nSet)
     n = nSet(k);
@@ -62,13 +63,15 @@ for k = 1:length(nSet)
     nnzB1 = nnz(E);
     % luE = lu(E);
     % nnz2 = nnz(luE);
-    [L,U,~,~] = lu(E);
+%     [L,U,~,~] = lu(E);
+    [L,U] = lu(E,0);
     nnzB2 = nnz(L)+nnz(U)-length(E);
     ratB = nnzB2/nnzB1;
     nn(k) = n;
 
     fprintf('After permute: n = %4i,  nz before = %8i, nz lu =%8i, ratio= %3f\n', n,nnzB1,...
         nnzB2,  ratB);
+    figure
     subplot(2,2,2); spy(E); title('E');subplot(2,2,4); spy(L+U);title('L+U');
 
 %     save('OBF_permutevsorig_lupq.mat', 'nn', 'nnzA1', 'nnzA2', 'ratA','nnzB1', 'nnzB2', 'ratB');

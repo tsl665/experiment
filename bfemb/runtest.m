@@ -4,15 +4,15 @@ addpath ~/Documents/MATLAB/package/BF/1D/src
 
 dataFileName1 = 'bfEmbed_sym_permutation.mat';
 % dataFileName2 = 'bfMimicEmbed_eye.mat';
-bfopt.rfin = 75;
+bfopt.rfin = 2;
 bfopt.tol = 1e-10;
 bfopt.funName = 'dftm';
-bfopt.ifMiddleEye = 0;
+bfopt.ifMiddleEye = 1;
 embopt.ifEliminateSigmaM = 0;
 embopt.ifEliminateSigmaM = ~bfopt.ifMiddleEye && embopt.ifEliminateSigmaM;
 % nSetAll = 1e3*([1,2,4,8,16,32,64,128]);
-% nSetAll = 1e3*4;
-nSetAll = 2.^[4:10];
+ nSetAll = 2e3;
+% nSetAll = 2.^[4:10];
 for j = 1:length(nSetAll)
     n = nSetAll(j);
     
@@ -36,17 +36,18 @@ for j = 1:length(nSetAll)
 
     %% Embed the factorization -- SigmaM is Permutation
 %     tic
-%     [ E1 ] = bfemb( Factor , embopt);
+    [ E ] = bfemb( Factor , embopt);
 %     tEmbed = toc
-%     [L1,U1,~,~] = lu(E1);
-    [ E ] = bfemb_sym( Factor , embopt);
+%     [ E ] = bfemb_sym( Factor , embopt);
+%     E = fliplr(flipud(E));
     infoE = whos('E');
     fprintf(['Complete embedding. E has size [', num2str(infoE.size(1)), ... 
         ', ',num2str(infoE.size(2)),']. Require ' ...
         ,num2str(infoE.bytes/2^30),' G to store the sparse embedding. \n\n']);
     
     fprintf(['umfpack LU factorizing...\n']);
-    [L,U,~,~] = lu(E);
+%     [L,U,~,~] = lu(fliplr(flipud(E)));
+    [L,U,p] = lu(E,'vector');
     nnzL(j) = nnz(L);
     nnzU(j) = nnz(U);
     nnzTotal(j) = nnzL(j) + nnzU(j);
@@ -73,7 +74,7 @@ for j = 1:length(nSetAll)
 %     tApply(j) = toc;
 % 
 %     relerr(j) = norm(b - b_solve)/norm(b) 
-    save(dataFileName1, 'nSet', 'nnzL', 'nnzU', 'nnzTotal','nnzRate', 'nnzE');
+%     save(dataFileName1, 'nSet', 'nnzL', 'nnzU', 'nnzTotal','nnzRate', 'nnzE');
 
 end
 % figure

@@ -9,14 +9,15 @@ bfopt.tol = 1e-12;
 bfopt.trueP = 0;
 
 % nSetAll = 1e3*([1]);
-nSetAll = 2.^[10:10];
+nSetAll = 2.^[9:9];
 nnzL = []; nnzU = []; nnzTotal = []; nnzRate = []; nSet = [];
 for j = 1:length(nSetAll)
     n = nSetAll(j);
     fprintf(['======================================\n']);
     fprintf(['obf_fillin test: n = ',num2str(n),'\n']);
     fprintf(['BF factorization generating...\n']);
-    A = OBFMimic( n, bfopt );
+%     A = OBFMimic( n, bfopt );
+    A = OBFMimic2( n, bfopt );
     infoA = whos('A');
     fprintf(['Complete factorization.\n', ...
         'Original Matrices is factorized into a product of ' ... 
@@ -31,7 +32,8 @@ for j = 1:length(nSetAll)
         ,num2str(infoE.bytes/2^30),' G to store the sparse embedding. \n\n']);
     
     fprintf(['umfpack LU factorizing...\n']);
-    [L, U, P, Q, R] = lu(E);
+%     [L, U, P, Q, R] = lu(E);
+    [L,U,P] = lu(E);
     nnzL(j) = nnz(L);
     nnzU(j) = nnz(U);
     nnzTotal(j) = nnzL(j) + nnzU(j);
@@ -46,7 +48,10 @@ for j = 1:length(nSetAll)
     fprintf('n = %4i,  nz before = %8i, nz lu =%8i, ratio= %3f\n', nSet(j),nnzE(j),...
 	nnzTotal(j),  nnzTotal(j)/nnzE(j));
 end
-% figure
+figure
+subplot(2,2,1);spy(E);subplot(2,2,2);spy(L+U);
+subplot(2,2,3);spy(L);subplot(2,2,4);spy(U);
+
 % subplot(3,2,1); spy(L1);subplot(3,2,2);spy(U1);
 % subplot(3,2,3);spy(L2);subplot(3,2,4);spy(U2);
 % subplot(3,2,5);spy(L3);subplot(3,2,6);spy(U3);
